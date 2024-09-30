@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sale } from './entities/sale.entity';
@@ -13,7 +17,7 @@ export class SaleService {
     private readonly paginationService: PaginationService,
   ) {}
 
-  async create(createSaleDto:CreateSaleDto ): Promise<Sale> {
+  async create(createSaleDto: CreateSaleDto): Promise<Sale> {
     const sale = this.saleRepository.create(createSaleDto);
 
     try {
@@ -39,7 +43,7 @@ export class SaleService {
       .select('SUM(sale.Total_amount)', 'total')
       .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
       .getRawOne();
-      
+
     return result.total || 0;
   }
 
@@ -51,9 +55,11 @@ export class SaleService {
       .createQueryBuilder('sale')
       .select('SUM(sale.Total_amount)', 'total')
       .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
-      .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', { month: currentMonth })
+      .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', {
+        month: currentMonth,
+      })
       .getRawOne();
-      
+
     return result.total || 0;
   }
 
@@ -66,13 +72,15 @@ export class SaleService {
       .createQueryBuilder('sale')
       .select('SUM(sale.Total_amount)', 'total')
       .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
-      .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', { month: currentMonth })
+      .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', {
+        month: currentMonth,
+      })
       .andWhere('EXTRACT(DAY FROM sale.Date) = :day', { day: currentDay })
       .getRawOne();
-      
+
     return result.total || 0;
   }
-  
+
   async findAll(
     page: number,
     limit: number = 25,
@@ -84,17 +92,44 @@ export class SaleService {
         Date: 'DESC', // or 'ASC' for ascending order
       },
     });
-  
+
     return { data, total };
   }
-  
 
-  async findOne(id: string): Promise<Sale> {
-    const sale = await this.saleRepository.findOne({
-      where: { id }, 
-    });
+  async findById(id: string): Promise<Sale> {
+    const sale = await this.saleRepository.findOne({ where: { id } });
     if (!sale) throw new NotFoundException('Sale not found');
     return sale;
+  }
+
+  async findByFullName(Full_name: string): Promise<Sale[]> {
+    const sales = await this.saleRepository.createQueryBuilder('sale')
+        .where('LOWER(sale.Full_name) LIKE LOWER(:Full_name)', { Full_name: `%${Full_name}%` })
+        .getMany();
+
+    if (!sales.length) {
+        throw new NotFoundException('No sales found for this Full Name');
+    }
+    return sales;
+}
+
+  async findByDate(date: Date): Promise<Sale[]> {
+    // Format the date to MM-DD-YYYY
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    const formattedDate = `${month}-${day}-${year}`; // MM-DD-YYYY format
+
+    const sales = await this.saleRepository
+      .createQueryBuilder('sale')
+      .where('DATE_FORMAT(sale.Date, "%m-%d-%Y") = :date', {
+        date: formattedDate,
+      }) // Use DATE_FORMAT for MySQL
+      .getMany();
+
+    if (!sales.length)
+      throw new NotFoundException('No sales found for this date');
+    return sales;
   }
 
   async update(id: string, updateSaleDto: Partial<Sale>): Promise<Sale> {

@@ -131,9 +131,20 @@ export class SaleController {
   }
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific sale by ID' })
-  
-  async findOne(@Param('id') id: string): Promise<Sale> {
-    return this.saleService.findOne(id);
+  async findById(@Param('id') id: string): Promise<Sale> {
+      return this.saleService.findById(id);
+  }
+
+  @Get('name/:Full_name')
+  @ApiOperation({ summary: 'Get a specific sale by Full Name' })
+  async findByFullName(@Param('Full_name') Full_name: string): Promise<Sale[]> {
+      return this.saleService.findByFullName(Full_name);
+  }
+
+  @Get('date/:date')
+  @ApiOperation({ summary: 'Get a specific sale by Date' })
+  async findByDate(@Param('date') date: string): Promise<Sale[]> {
+      return this.saleService.findByDate(new Date(date));
   }
 
   @Patch(':id')
