@@ -14,23 +14,23 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
-      # - name: Use Node.js 16
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '16'
-      # - name: Cache npm dependencies
-      #   uses: actions/cache@v3
-      #   id: cache-node-modules
-      #   with:
-      #     path: '**/node_modules'
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      # - name: 🔨 Install Dependencies
-      #   if: steps.cache-node-modules.outputs.cache-hit != 'true'
-      #   run: |
-      #     npm install
-      #   env:
-      #    NODE_OPTIONS: "--max_old_space_size=4096"
-      #    CI: false
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: 🔨 Install Dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          npm install
+        env:
+         NODE_OPTIONS: "--max_old_space_size=4096"
+         CI: false
       # - name: 🏗 Build Project
       #   run: npm run build
       - name: 📂 Sync folders and files to the server
@@ -39,4 +39,4 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
+          local-dir:  dist/
