@@ -33,7 +33,7 @@ export class SaleController {
     private readonly fileService: FileService,
   ) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Create item with file uploads' })
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -63,7 +63,7 @@ export class SaleController {
     }
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all sales with optional pagination' })
   async findAll(
     @Query('page') pageQuery: string = '1',

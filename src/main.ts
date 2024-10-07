@@ -20,8 +20,7 @@ async function bootstrap() {
 
 //Enable CORS
 app.use(cors({
-    origin: ["https://system.tridal.org"],
-    // origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000","https://akbsproduction.com"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     credentials: true,

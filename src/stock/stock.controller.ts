@@ -51,7 +51,7 @@ export class StockController {
     }
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all stocks with optional pagination' })
   async findAll(
     @Query('page') pageQuery: string = '1',
