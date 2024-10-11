@@ -24,7 +24,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 export class MovementController {
   constructor(private readonly movementService: MovementService) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Create stock movement' })
   async create(@Body() createMovementDto: CreateMovementDto): Promise<Movement> {
     try {
@@ -34,7 +34,7 @@ export class MovementController {
     }
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all with optional pagination' })
   async findAll(
     @Query('page') pageQuery: string = '1',

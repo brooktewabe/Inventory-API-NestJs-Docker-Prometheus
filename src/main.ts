@@ -20,7 +20,7 @@ async function bootstrap() {
 
 // Enable CORS
 app.use(cors({
-    origin: ["http://localhost:4173","https://akbsproduction.com"],
+    origin: ["http://localhost:3000","https://akbsproduction.com"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     credentials: true,
