@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
     // Load environment variables
     dotenv.config();
-
+    // app.enableCors({credentials: true, origin: "*"});
   //Swagger Setup
   const config = new DocumentBuilder()
     .setTitle('Inventory Management System API')
@@ -18,15 +18,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-//Enable CORS
+// Enable CORS
 app.use(cors({
-    origin: ["https://system.tridal.org"],
-    // origin: ["http://localhost:3000"],
+    origin: ["http://localhost:4173","https://akbsproduction.com"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     credentials: true,
   }));
-
 
   await app.listen(5000);
 }
