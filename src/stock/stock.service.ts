@@ -31,6 +31,7 @@ export class StockService {
 
   async create(
     createStockDto: CreateStockDto,
+    user: User,
     file?: Express.Multer.File,
   ): Promise<Stock> {
     try {
@@ -41,6 +42,16 @@ export class StockService {
       }
 
       const stock = this.stockRepository.create(createStockDto);
+      // Create movement record
+      const movementData: CreateMovementDto = {
+        User: `${user.fname} ${user.lname}`,
+        Name: stock.Name,
+        Adjustment: stock.Curent_stock,
+        Type: 'Addition',
+        Product_id: stock.id,
+        Date: undefined,
+      };
+      await this.movementService.create(movementData);
       return await this.stockRepository.save(stock);
     } catch (error) {
       throw new BadRequestException('Failed to create stock');
@@ -106,7 +117,7 @@ export class StockService {
       await this.movementService.create(movementData);
 
       // If the stock is below reorder level, send a notification
-      if (updateStockDto.Curent_stock < updateStockDto.Reorder_level) {
+      if (+updateStockDto.Curent_stock < +updateStockDto.Reorder_level) {
         const notificationData: CreateNotificationDto = {
           message: `${updateStockDto.Name} is running low on stock.`,
           priority: 'High',

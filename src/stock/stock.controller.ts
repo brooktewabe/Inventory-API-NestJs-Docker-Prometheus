@@ -45,9 +45,10 @@ export class StockController {
   async createStock(
     @UploadedFile() file: Express.Multer.File,
     @Body() createStockDto: CreateStockDto,
+    @CurrentUser() user: User,
   ): Promise<Stock> {
     try {
-      return await this.stockService.create(createStockDto, file);
+      return await this.stockService.create(createStockDto, user, file);
     } catch (error) {
       throw new BadRequestException(error);
     }
