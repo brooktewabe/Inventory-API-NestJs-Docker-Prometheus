@@ -27,6 +27,8 @@ import { createReadStream, existsSync } from 'fs';
 import { Stock } from './entities/stock.entity';
 import { FileService } from 'src/common/file.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { CurrentUser } from 'decorators/User.decorators';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('stock')
 @UseGuards(AuthGuard)
@@ -105,9 +107,10 @@ export class StockController {
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() updateStockDto: UpdateStockDto,
+    @CurrentUser() user: User,
   ): Promise<Stock> {
     try {
-      return await this.stockService.update(id, updateStockDto, file);
+      return await this.stockService.update(id, updateStockDto, user, file);
     } catch (error) {
       throw new BadRequestException('Failed to update stock or upload image');
     }

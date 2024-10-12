@@ -5,10 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Stock } from 'src/stock/entities/stock.entity';
 import { PaginationModule } from 'src/common/pagination.module';
 import { FileService } from '../common/file.service';
+import { MovementModule } from 'src/movement/movement.module';
+import { NotificationModule } from 'src/notification/notification.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stock]),
-  PaginationModule
+  PaginationModule,
+  MovementModule,
+  NotificationModule,
+  UserModule
 ],
   controllers: [StockController],
   providers: [StockService, FileService],
