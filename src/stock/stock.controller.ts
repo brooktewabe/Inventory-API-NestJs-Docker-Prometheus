@@ -45,7 +45,7 @@ export class StockController {
   async createStock(
     @UploadedFile() file: Express.Multer.File,
     @Body() createStockDto: CreateStockDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: User, // get current users data from user decorator
   ): Promise<Stock> {
     try {
       return await this.stockService.create(createStockDto, user, file);

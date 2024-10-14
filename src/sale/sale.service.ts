@@ -89,7 +89,7 @@ export class SaleService {
       skip: (page - 1) * limit,
       take: limit,
       order: {
-        Date: 'DESC', // or 'ASC' for ascending order
+        Date: 'DESC',
       },
     });
 
@@ -115,7 +115,7 @@ export class SaleService {
 
   async findByDate(date: Date): Promise<Sale[]> {
     // Format the date to MM-DD-YYYY
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
     const year = date.getFullYear();
     const formattedDate = `${month}-${day}-${year}`; // MM-DD-YYYY format

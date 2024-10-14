@@ -105,7 +105,7 @@ export class StockService {
     }
 
     try {
-      // Create movement record
+      // Create movement record on update
       const movementData: CreateMovementDto = {
         User: `${user.fname} ${user.lname}`,
         Name: stock.Name,
