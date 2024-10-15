@@ -60,18 +60,58 @@ export class UserController {
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new BadRequestException('Invalid credentials');
     }
-
-    const jwt = await this.jwtService.signAsync({ id: user.id, fname: user.fname, lname: user.lname });
-    response.cookie('jwt', jwt, { httpOnly: true });
-
+  
+    const accessToken = await this.jwtService.signAsync(
+      { id: user.id, fname: user.fname, lname: user.lname }, 
+      { expiresIn: '15m' });
+    const refreshToken = await this.jwtService.signAsync(
+      { id: user.id }, 
+      { expiresIn: '7d' });
+  
+    // Optionally save refreshToken in DB for user
+    await this.userService.update(user.id, { refreshToken });
+  
+    // Set both tokens as HttpOnly cookies
+    response.cookie('jwt', accessToken, { httpOnly: true });
+    response.cookie('refreshToken', refreshToken, { httpOnly: true });
+  
     return {
-      message: 'Success',
-      jwt: jwt,
+      message: 'Login successful',
+      accessToken,
+      refreshToken, // Also return refreshToken if you want to handle client-side storage
       role: user.role,
       id: user.id
     };
   }
-
+  
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh Access Token' })
+  async refreshToken(
+    @Body('refreshToken') refreshToken: string, // From client-side or cookies
+    @Res({ passthrough: true }) response: ExpressResponse,
+  ) {
+    try {
+      const payload = await this.jwtService.verifyAsync(refreshToken);
+      const user = await this.userService.findOne(payload.id);
+  
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+  
+      const newAccessToken = await this.jwtService.signAsync(
+        { id: user.id, fname: user.fname, lname: user.lname }, 
+        { expiresIn: '15m' }
+      );
+  
+      // Set the new access token as a cookie
+      response.cookie('jwt', newAccessToken, { httpOnly: true });
+  
+      return { accessToken: newAccessToken };
+    } catch (e) {
+      throw new BadRequestException('Invalid refresh token');
+    }
+  }
+  
   @Post('logout')
   @HttpCode(200)
   async logout(@Res({ passthrough: true }) response: ExpressResponse) {

@@ -20,4 +20,7 @@ export class User {
 
   @Column()
   role: string;
+
+  @Column({ nullable: true }) // Optional: Store refresh tokens
+  refreshToken?: string;
 }
