@@ -3,9 +3,14 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './common/logger.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // Create the application with Winston logger configuration
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonConfig),
+  });
     // Load environment variables
     dotenv.config();
   //Swagger Setup
