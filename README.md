@@ -1,9 +1,12 @@
 # Fronted - https://github.com/brooktewabe/Inventory-system-React
 
 JWT auth <br>
+Refresh Token <br>
 Supports both postgres and mysql <br>
 TypeORM<br>
+Winston Logger <br>
 File  uploads<br>
+
 
 
 
