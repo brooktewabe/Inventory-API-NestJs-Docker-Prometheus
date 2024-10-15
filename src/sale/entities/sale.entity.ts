@@ -15,7 +15,8 @@ export class Sale {
   @Column()
   Contact: string;
   
-  @Column('decimal', { precision: 6, scale: 2 })
+  // @Column('decimal', { precision: 6, scale: 2 }) for mysql
+  @Column('decimal')
   Amount: number;
   
   @Column()
@@ -24,13 +25,13 @@ export class Sale {
   @Column()
   Payment_method: string;
   
-  @Column('decimal', { precision: 6, scale: 2 })
+  @Column('decimal')
   Total_amount: number;
   
   @Column({ nullable: true })
   Credit_due: string;
 
-  @Column('decimal',{ nullable: true , precision: 6, scale: 2 })
+  @Column('decimal',{ nullable: true})
   Credit: number;
 
   @Column({ nullable: true })

@@ -15,7 +15,8 @@ export class Stock {
   @Column()
   Curent_stock: number;
 
-  @Column('decimal', { precision: 6, scale: 2 })
+  // @Column('decimal', { precision: 6, scale: 2 }) for mysql
+  @Column('decimal')
   Price: number
 
   @Column()
