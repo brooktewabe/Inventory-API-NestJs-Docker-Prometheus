@@ -6,14 +6,11 @@ Prometheus and grafana monitoring <br>
 Supports both postgres and mysql <br>
 TypeORM<br>
 Winston Logger <br>
-File uploads<br>
+File uploads<br> <br>
+For docker prometheus setup change typeorm.config host to  host: 'postgres_db' <br><br>
 
-Demo grafana screenshots: <br/>
+Demo grafana screenshot: <br/>
 ![Demo](grafana.png)
-
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest

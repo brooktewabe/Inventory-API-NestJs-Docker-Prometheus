@@ -16,7 +16,8 @@ export const config: TypeOrmModuleOptions = {
   password: '1234',
   port: 5432,
   database: 'inventory',
-  host: 'postgres_db',
+  host: '127.0.0.1',
+  // host: 'postgres_db', // for docker prometheus setup uncomment this
   synchronize: true,
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
 };
