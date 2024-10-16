@@ -2,13 +2,14 @@
 
 JWT auth <br>
 Refresh Token <br>
+Prometheus and grafana monitoring <br>
 Supports both postgres and mysql <br>
 TypeORM<br>
 Winston Logger <br>
-File  uploads<br>
+File uploads<br>
 
-
-
+Demo grafana screenshots: <br/>
+![Demo](grafana.png)
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>

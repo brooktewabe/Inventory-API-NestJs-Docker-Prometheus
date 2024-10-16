@@ -16,7 +16,7 @@ export const config: TypeOrmModuleOptions = {
   password: '1234',
   port: 5432,
   database: 'inventory',
-  host: '127.0.0.1',
+  host: 'postgres_db',
   synchronize: true,
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
 };

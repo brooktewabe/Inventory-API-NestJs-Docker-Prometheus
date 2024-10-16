@@ -14,7 +14,7 @@ import { MovementModule } from './movement/movement.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RequestLoggerMiddleware } from './common/request-logger.middleware';
-
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 @Module({
   imports: [ MulterModule.register({
     storage: diskStorage({
@@ -31,6 +31,9 @@ import { RequestLoggerMiddleware } from './common/request-logger.middleware';
   ConfigModule.forRoot({
     isGlobal: true,
   }),
+    PrometheusModule.register({
+      path: '/metrics',
+    }),
     TypeOrmModule.forRoot(config),
   UserModule,
   NotificationModule,
