@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Sale } from './entities/sale.entity';
 import { PaginationService } from 'src/common/pagination.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { Stock } from 'src/stock/entities/stock.entity';
 
 @Injectable()
 export class SaleService {
@@ -15,10 +16,23 @@ export class SaleService {
     @InjectRepository(Sale)
     private readonly saleRepository: Repository<Sale>,
     private readonly paginationService: PaginationService,
+    @InjectRepository(Stock)
+    private readonly stockRepository: Repository<Stock>, // Inject Stock repository
   ) {}
 
   async create(createSaleDto: CreateSaleDto): Promise<Sale> {
-    const sale = this.saleRepository.create(createSaleDto);
+    const stock = await this.stockRepository.findOne({
+      where: { id: createSaleDto.Product_id }, // Get the stock by Product_id
+    });
+
+    if (!stock) {
+      throw new BadRequestException('Product not found');
+    }
+
+    const sale = this.saleRepository.create({
+      ...createSaleDto,
+      Product: stock, // Assign the related product
+    });
 
     try {
       return await this.saleRepository.save(sale);
