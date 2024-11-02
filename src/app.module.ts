@@ -11,6 +11,7 @@ import { NotificationModule } from './notification/notification.module';
 import { StockModule } from './stock/stock.module';
 import { SaleModule } from './sale/sale.module';
 import { MovementModule } from './movement/movement.module';
+import { CategoryModule } from './category/category.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -35,7 +36,8 @@ import { join } from 'path';
   NotificationModule,
   StockModule,
   SaleModule,
-  MovementModule
+  MovementModule,
+  CategoryModule,
 ],
   controllers: [AppController],
   providers: [AppService],
