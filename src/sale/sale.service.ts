@@ -131,7 +131,52 @@ export class SaleService {
       throw new NotFoundException('No sales found for this date');
     return sales;
   }
+  async calculateTotalSumByReturnReason(reason: string): Promise<number> {
+    const currentYear = new Date().getFullYear(); // Get current year
 
+    const result = await this.saleRepository
+      .createQueryBuilder('sales')
+      .select('SUM(sales.Total_amount)', 'total')
+      .where('sales.Return_reason = :reason', { reason })
+      .andWhere('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
+      .getRawOne();
+
+    return result.total || 0;
+  }
+
+  async countSalesAndCredit(): Promise<{ totalCount: number; creditCount: number }> {
+    const currentYear = new Date().getFullYear(); // Get current year
+
+    const totalCountResult = await this.saleRepository
+      .createQueryBuilder('sales')
+      .select('COUNT(*)', 'total')
+      .where('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
+      .getRawOne();
+
+    const creditCountResult = await this.saleRepository
+      .createQueryBuilder('sales')
+      .select('COUNT(*)', 'creditCount')
+      .where('sales.Credit IS NOT NULL AND sales.Credit != 0')
+      .andWhere('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
+      .getRawOne();
+
+    return {
+      totalCount: parseInt(totalCountResult.total, 10) || 0,
+      creditCount: parseInt(creditCountResult.creditCount, 10) || 0,
+    };
+  }
+
+  async countClientsWithFutureCreditDue(): Promise<number> {
+    const currentDate = new Date(); // Get current date
+
+    const result = await this.saleRepository
+      .createQueryBuilder('sales')
+      .select('COUNT(*)', 'count')
+      .where('sales.Credit_due > :currentDate', { currentDate })
+      .getRawOne();
+
+    return parseInt(result.count, 10) || 0; // Return 0 if no records found
+  }
   async update(id: string, updateSaleDto: Partial<Sale>): Promise<Sale> {
     const sale = await this.saleRepository.preload({
       id,

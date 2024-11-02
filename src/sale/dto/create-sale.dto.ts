@@ -10,5 +10,7 @@ export class CreateSaleDto {
   Credit: number;
   Receipt: string;
   Transaction_id: string;
+  Return_reason: string;
+  Sale_type: string;
   Date: Date;
 }

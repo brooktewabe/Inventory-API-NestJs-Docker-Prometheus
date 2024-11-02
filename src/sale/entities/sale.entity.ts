@@ -23,6 +23,9 @@ export class Sale {
   
   @Column()
   Payment_method: string;
+
+  @Column({default :"Single"})
+  Sale_type: string;
   
   @Column('decimal', { precision: 6, scale: 2 })
   Total_amount: number;
@@ -35,6 +38,9 @@ export class Sale {
 
   @Column({ nullable: true })
   Receipt: string;
+
+  @Column({ nullable: true })
+  Return_reason: string;
 
   @Column()
   Transaction_id: string;

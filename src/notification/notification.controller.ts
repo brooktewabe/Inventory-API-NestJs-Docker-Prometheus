@@ -11,7 +11,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Send a new notification' })
   @HttpCode(HttpStatus.CREATED)
   async create(
@@ -29,19 +29,19 @@ export class NotificationController {
     return this.notificationService.markAsRead(id, isRead);
   }
 
-  @Get(':id')
+  @Get('all/:id')
   @ApiOperation({ summary: 'Get a notification by ID' })
   async getNotificationById(@Param('id') id: string): Promise<Notification> {
     return this.notificationService.findOne(id);
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all notifications' })
   async getAllNotification(): Promise<Notification[]> {
     return this.notificationService.findAll();
   }
 
-  @Delete(':id')
+  @Delete('all/:id')
   @ApiOperation({ summary: 'Delete a notification by ID' })
   async removeNotification(@Param('id') id: string): Promise<void> {
     await this.notificationService.remove(id);

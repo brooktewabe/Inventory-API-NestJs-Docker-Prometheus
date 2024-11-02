@@ -51,7 +51,7 @@ export class StockController {
     }
   }
 
-  @Get()
+  @Get('all')
   @ApiOperation({ summary: 'Get all stocks with optional pagination' })
   async findAll(
     @Query('page') pageQuery: string = '1',
@@ -69,7 +69,7 @@ export class StockController {
     return result;
   }
 
-  @Get(':id')
+  @Get('all/:id')
   @ApiOperation({ summary: 'Get a specific stock by ID' })
   async findOne(@Param('id') id: string): Promise<Stock> {
     const stock = await this.stockService.findOne(id);
@@ -98,7 +98,7 @@ export class StockController {
     createReadStream(filePath).pipe(response);
   }
 
-  @Patch(':id')
+  @Patch('all/:id')
   @ApiOperation({ summary: 'Update a stock with optional photo upload' })
   @UseInterceptors(FileInterceptor('file'))
   async update(
@@ -118,7 +118,7 @@ export class StockController {
     const totalSum = await this.stockService.calculateTotalSum();
     return { totalSum };
   }
-  @Delete(':id')
+  @Delete('all/:id')
   @ApiOperation({ summary: 'Delete a specific stock by ID' })
   async remove(@Param('id') id: string): Promise<void> {
     await this.stockService.remove(id);

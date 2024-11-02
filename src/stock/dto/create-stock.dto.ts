@@ -6,4 +6,5 @@ export class CreateStockDto {
     Location: string;
     Product_image: string;
     Price: number;
+    Type: string;
 }

@@ -30,15 +30,15 @@ export class NotificationService {
       if (sale.Credit_due) {
         const creditDueDate = new Date(sale.Credit_due);
         if (creditDueDate.toDateString() === today.toDateString()) {
-          await this.createAndSendNotification(sale.Full_name, 'today');
+          await this.createAndSendNotification(sale.Full_name, 'today', sale.Credit);
         }
       }
     }
   }
 
-  async createAndSendNotification(fullName: string, dueDate: string) {
+  async createAndSendNotification(fullName: string, dueDate: string, Credit: number) {
     const notifData = {
-      message: `${fullName}'s credit due ${dueDate}.`,
+      message: `${fullName}'s ${Credit} br credit due ${dueDate}.`,
       priority: 'High',
     };
 

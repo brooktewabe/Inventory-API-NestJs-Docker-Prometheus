@@ -24,6 +24,9 @@ export class Stock {
   @Column()
   Location: string;
 
+  @Column({default: 'Finished Product'})
+  Type: string;
+
   @Column({ nullable: true })
   Product_image: string;
 }
