@@ -30,10 +30,10 @@ export class Sale {
   @Column('decimal', { precision: 6, scale: 2 })
   Total_amount: number;
   
-  @Column()
+  @Column({ nullable: true })
   Credit_due: string;
 
-  @Column('decimal', { precision: 6, scale: 2 })
+  @Column('decimal',{ nullable: true , precision: 6, scale: 2 })
   Credit: number;
 
   @Column({ nullable: true })

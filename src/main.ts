@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
     // Load environment variables
     dotenv.config();
-    app.enableCors({credentials: true, origin: "*"});
+
   //Swagger Setup
   const config = new DocumentBuilder()
     .setTitle('Inventory Management System API')

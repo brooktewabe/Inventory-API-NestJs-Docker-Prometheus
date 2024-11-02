@@ -12,6 +12,7 @@ import { FileService } from '../common/file.service';
 ],
   controllers: [MovementController],
   providers: [MovementService, FileService],
+  exports:[MovementService]
 })
 export class MovementModule {}
 
