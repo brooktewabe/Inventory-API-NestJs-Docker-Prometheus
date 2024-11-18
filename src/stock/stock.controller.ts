@@ -27,7 +27,7 @@ import { createReadStream, existsSync } from 'fs';
 import { Stock } from './entities/stock.entity';
 import { FileService } from 'src/common/file.service';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { CurrentUser } from 'decorators/User.decorators';
+import { CurrentUser } from 'src/decorators/User.decorators';
 import { User } from 'src/user/entities/user.entity';
 
 @Controller('stock')

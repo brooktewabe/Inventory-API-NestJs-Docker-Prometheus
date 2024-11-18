@@ -29,6 +29,7 @@ export class SaleService {
   async calculateTotalSum(): Promise<number> {
     const result = await this.saleRepository
       .createQueryBuilder('sale')
+      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
       .select('SUM(sale.Total_amount)', 'total')
       .getRawOne();
 
@@ -41,11 +42,12 @@ export class SaleService {
     const result = await this.saleRepository
       .createQueryBuilder('sale')
       .select('SUM(sale.Total_amount)', 'total')
-      .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .andWhere('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear }) // Use andWhere instead of where
       .getRawOne();
 
-    return result.total || 0;
-  }
+    return result.total || 0; // Return 0 if total is null
+}
 
   // Get total amount for the current month
   async getTotalAmountForCurrentMonth(): Promise<number> {
@@ -54,7 +56,8 @@ export class SaleService {
     const result = await this.saleRepository
       .createQueryBuilder('sale')
       .select('SUM(sale.Total_amount)', 'total')
-      .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .andWhere('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
       .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', {
         month: currentMonth,
       })
@@ -71,7 +74,8 @@ export class SaleService {
     const result = await this.saleRepository
       .createQueryBuilder('sale')
       .select('SUM(sale.Total_amount)', 'total')
-      .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .andWhere('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
       .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', {
         month: currentMonth,
       })
@@ -85,14 +89,23 @@ export class SaleService {
     page: number,
     limit: number = 25,
   ): Promise<{ data: Sale[]; total: number }> {
-    const [data, total] = await this.saleRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
-      order: {
-        Date: 'DESC', // or 'ASC' for ascending order
-      },
-    });
-
+    const [data, total] = await this.saleRepository
+      .createQueryBuilder('sale')
+      .where('sale.Sale_type != :type', { type: 'Batch' })
+      .orderBy('sale.Date', 'DESC') // Adjust to 'ASC' for ascending order if needed
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+  
+    return { data, total };
+  }
+  async findAllCredit(
+  ): Promise<{ data: Sale[]; total: number }> {
+    const [data, total] = await this.saleRepository
+      .createQueryBuilder('sale')
+      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .orderBy('sale.Date', 'DESC') // Adjust to 'ASC' for ascending order if needed
+      .getManyAndCount();
     return { data, total };
   }
 
@@ -150,13 +163,15 @@ export class SaleService {
     const totalCountResult = await this.saleRepository
       .createQueryBuilder('sales')
       .select('COUNT(*)', 'total')
-      .where('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
+      .where('sales.Sale_type != :type', { type: 'Batch Sale' })
+      .andWhere('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
       .getRawOne();
 
     const creditCountResult = await this.saleRepository
       .createQueryBuilder('sales')
       .select('COUNT(*)', 'creditCount')
-      .where('sales.Credit IS NOT NULL AND sales.Credit != 0')
+      .where('sales.Sale_type != :type', { type: 'Batch Sale' })
+      .andWhere('sales.Credit IS NOT NULL AND sales.Credit != 0')
       .andWhere('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
       .getRawOne();
 
@@ -173,6 +188,17 @@ export class SaleService {
       .createQueryBuilder('sales')
       .select('COUNT(*)', 'count')
       .where('sales.Credit_due > :currentDate', { currentDate })
+      .getRawOne();
+
+    return parseInt(result.count, 10) || 0; // Return 0 if no records found
+  }
+  async countClientsWithPastCreditDue(): Promise<number> {
+    const currentDate = new Date(); // Get current date
+
+    const result = await this.saleRepository
+      .createQueryBuilder('sales')
+      .select('COUNT(*)', 'count')
+      .where('sales.Credit_due < :currentDate', { currentDate })
       .getRawOne();
 
     return parseInt(result.count, 10) || 0; // Return 0 if no records found

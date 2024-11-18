@@ -63,44 +63,6 @@ export class SaleController {
     }
   }
 
-// @Post('batch-create')
-// @ApiOperation({ summary: 'Create multiple sales with file uploads' })
-// @UseInterceptors(
-//   FileFieldsInterceptor([
-//     { name: 'Receipt', maxCount: 10 }, // Adjust maxCount based on your needs
-//   ]),
-// )
-// async createBatchSales(
-//   @UploadedFiles()
-//   files: {
-//     Receipt?: Express.Multer.File[];
-//   },
-//   @Body() createSalesDto: CreateSaleDto[],
-// ): Promise<Sale[]> {
-//   const sales = [];
-  
-//   try {
-//     for (let i = 0; i < createSalesDto.length; i++) {
-//       const saleDto = createSalesDto[i];
-
-//       // Handle file uploads if needed
-//       if (files.Receipt && files.Receipt[i]) {
-//         const imageFilePath = this.fileService.saveFile(files.Receipt[i], '');
-//         saleDto.Receipt = path.basename(imageFilePath);
-//       }
-
-//       // Create the sale and push it to the sales array
-//       const createdSale = await this.saleService.create(saleDto);
-//       sales.push(createdSale);
-//     }
-    
-//     return sales;
-//   } catch (error) {
-//     console.log(error);
-//     throw new BadRequestException('Failed to create one or more sales or upload files');
-//   }
-// }
-
   @Get('all')
   @ApiOperation({ summary: 'Get all sales with optional pagination' })
   async findAll(
@@ -118,7 +80,19 @@ export class SaleController {
 
     return result;
   }
+  @Get('all-credit')
+  @ApiOperation({ summary: 'Get all sales credits with optional pagination' })
+  async findAllCredit(
+  ): Promise<{ data: Sale[]; total: number }> {
 
+    const result = await this.saleService.findAllCredit();
+
+    if (!result.data.length) {
+      throw new NotFoundException('No sales found');
+    }
+
+    return result;
+  }
 
   @Get('uploads/:filename')
   @ApiOperation({ summary: 'Get uploaded file by filename' })
@@ -192,6 +166,12 @@ export class SaleController {
   @ApiOperation({ summary: 'Get count of clients whose Credit due is in the future' })
   async getClientsWithFutureCreditDue(): Promise<{ count: number }> {
     const count = await this.saleService.countClientsWithFutureCreditDue();
+    return { count };
+  }
+  @Get('clients-with-past-credit-due')
+  @ApiOperation({ summary: 'Get count of clients whose Credit due is in the future' })
+  async getClientsWithPastCreditDue(): Promise<{ count: number }> {
+    const count = await this.saleService.countClientsWithPastCreditDue();
     return { count };
   }
   @Get(':id')

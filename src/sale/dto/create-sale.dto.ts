@@ -4,6 +4,7 @@ export class CreateSaleDto {
   Contact: string;
   Amount: number;
   Quantity: number;
+  EachQuantity: string;
   Payment_method: string;
   Total_amount: number;
   Credit_due: string;

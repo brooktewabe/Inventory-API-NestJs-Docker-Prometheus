@@ -21,6 +21,9 @@ export class Sale {
   @Column()
   Quantity: number;
   
+  @Column({default:""})
+  EachQuantity: string;
+  
   @Column()
   Payment_method: string;
 
