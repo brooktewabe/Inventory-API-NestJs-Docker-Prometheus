@@ -9,7 +9,7 @@ Winston Logger <br>
 File uploads<br> <br>
 For docker prometheus setup change typeorm.config host to  host: 'postgres_db' <br><br>
 
-Demo grafana screenshot: <br/>
+Demo grafana screenshot <br/>
 ![Demo](grafana.png)
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
