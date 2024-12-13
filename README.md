@@ -7,7 +7,7 @@ Supports both postgres and mysql <br>
 TypeORM<br>
 Winston Logger <br>
 File uploads<br> <br>
-For docker prometheus setup change typeorm.config host to  host: 'postgres_db' <br><br>
+For **docker prometheus** setup change typeorm.config host to  host: 'postgres_db' <br><br>
 
 Demo grafana screenshot <br/>
 ![Demo](grafana.png)
