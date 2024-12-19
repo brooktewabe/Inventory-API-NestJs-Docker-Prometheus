@@ -1,4 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+
+// for mySQL
 // export const config: TypeOrmModuleOptions = {
 //   type: 'mysql',
 //   username: 'root',
@@ -10,6 +12,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 //   // entities: [__dirname + '/../**/*.entity.{ts,js}'],
 //   entities: ['dist/**/*.entity{.ts,.js}'],
 // };
+// for postgreSQL
 export const config: TypeOrmModuleOptions = {
   type: 'postgres',
   username: 'postgres',
