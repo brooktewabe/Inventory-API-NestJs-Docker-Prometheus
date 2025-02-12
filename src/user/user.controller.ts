@@ -33,6 +33,7 @@ export class UserController {
   ) {}
 
   @Post('signUp')
+  @UseGuards(AuthGuard) // Add AuthGuard to prevent creating a user without authentication 
   @ApiOperation({ summary: 'Sign up' })
   async signUp(@Body() createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.userService.findByEmail(
