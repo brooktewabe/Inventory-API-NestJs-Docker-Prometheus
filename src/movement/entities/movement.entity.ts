@@ -24,4 +24,6 @@ export class Movement {
   @Column()
   User: string;
 
+  @Column({nullable: true})
+  Product_Type: string;
 }

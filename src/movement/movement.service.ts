@@ -64,4 +64,42 @@ export class MovementService {
     const result = await this.movementRepository.delete(id);
     if (result.affected === 0) throw new NotFoundException('Movement not found');
   }
+  async getDailyMovements() {
+    return this.getAggregatedMovements('daily');
+  }
+
+  async getMonthlyMovements() {
+    return this.getAggregatedMovements('monthly');
+  }
+
+  async getYearlyMovements() {
+    return this.getAggregatedMovements('yearly');
+  }
+
+  private async getAggregatedMovements(type: 'daily' | 'monthly' | 'yearly') {
+    const now = new Date();
+    let dateCondition = '';
+  
+    if (type === 'daily') {
+      dateCondition = `DATE(m.Date) = CURDATE()`;
+    } else if (type === 'monthly') {
+      dateCondition = `YEAR(m.Date) = YEAR(CURDATE()) AND MONTH(m.Date) = MONTH(CURDATE())`;
+    } else if (type === 'yearly') {
+      dateCondition = `YEAR(m.Date) = YEAR(CURDATE())`;
+    }
+  
+    const data = await this.movementRepository
+      .createQueryBuilder('m')
+      .select('m.Name', 'Name')
+      .addSelect('SUM(m.Adjustment)', 'TotalAdjustment')
+      .where('m.Product_Type = :productType', { productType: 'Produced Product' })
+      .andWhere(dateCondition)
+      .andWhere('m.Adjustment > 0')
+      .groupBy('m.Name')
+      .orderBy('TotalAdjustment', 'DESC')
+      .getRawMany();
+  
+    return data;
+  }
+  
 }

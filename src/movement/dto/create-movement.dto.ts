@@ -5,4 +5,5 @@ export class CreateMovementDto {
   Date: Date;
   Adjustment: number;
   User: string;
+  Product_Type: string;
 }

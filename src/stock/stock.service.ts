@@ -50,6 +50,7 @@ export class StockService {
         Type: 'Addition',
         Product_id: stock.id,
         Date: undefined,
+        Product_Type: stock.Type
       };
       await this.movementService.create(movementData);
       return await this.stockRepository.save(stock);
@@ -113,6 +114,7 @@ export class StockService {
         Type: 'Modification',
         Product_id: stock.id,
         Date: undefined,
+        Product_Type: stock.Type
       };
       await this.movementService.create(movementData);
 

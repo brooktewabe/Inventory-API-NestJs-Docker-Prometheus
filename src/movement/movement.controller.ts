@@ -76,4 +76,18 @@ export class MovementController {
   async remove(@Param('id') id: string): Promise<void> {
     return this.movementService.remove(id);
   }
+  @Get('stats/daily')
+  async getDaily() {
+    return this.movementService.getDailyMovements();
+  }
+
+  @Get('stats/monthly')
+  async getMonthly() {
+    return this.movementService.getMonthlyMovements();
+  }
+
+  @Get('stats/yearly')
+  async getYearly() {
+    return this.movementService.getYearlyMovements();
+  }
 }

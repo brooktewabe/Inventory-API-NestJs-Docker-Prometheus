@@ -103,7 +103,7 @@ export class SaleService {
   ): Promise<{ data: Sale[]; total: number }> {
     const [data, total] = await this.saleRepository
       .createQueryBuilder('sale')
-      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .where('sale.Sale_type != :type', { type: 'Batch' })
       .orderBy('sale.Date', 'DESC') // Adjust to 'ASC' for ascending order if needed
       .getManyAndCount();
     return { data, total };
@@ -170,7 +170,7 @@ export class SaleService {
     const creditCountResult = await this.saleRepository
       .createQueryBuilder('sales')
       .select('COUNT(*)', 'creditCount')
-      .where('sales.Sale_type != :type', { type: 'Batch Sale' })
+      .where('sales.Sale_type != :type', { type: 'Batch' })
       .andWhere('sales.Credit IS NOT NULL AND sales.Credit != 0')
       .andWhere('EXTRACT(YEAR FROM sales.Date) = :year', { year: currentYear }) // Filter by current year
       .getRawOne();

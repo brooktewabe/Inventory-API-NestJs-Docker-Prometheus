@@ -63,7 +63,7 @@ export class SaleController {
     }
   }
 
-  @Get('all')
+  @Get('all-sales')
   @ApiOperation({ summary: 'Get all sales with optional pagination' })
   async findAll(
     @Query('page') pageQuery: string = '1',
