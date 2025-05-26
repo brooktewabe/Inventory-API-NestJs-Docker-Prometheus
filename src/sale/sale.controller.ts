@@ -80,6 +80,47 @@ export class SaleController {
 
     return result;
   }
+    @Get('all/day')
+  @ApiOperation({ summary: 'Get sales of the day (paginated)' })
+  async getSalesOfDay(
+    @Query('page') pageQuery: string = '1',
+    @Query('limit') limitQuery: string = '15',
+  ): Promise<{
+    data: { productId: string; totalSold: number; name: string }[];
+    total: number;
+  }> {
+    const page = parseInt(pageQuery, 10) || 1;
+    const limit = parseInt(limitQuery, 10) || 15;
+    return this.saleService.findSalesOfDay(page, limit);
+  }
+
+  @Get('all/month')
+  @ApiOperation({ summary: 'Get sales of the month (paginated)' })
+  async getSalesOfMonth(
+    @Query('page') pageQuery: string = '1',
+    @Query('limit') limitQuery: string = '15',
+  ): Promise<{
+    data: { productId: string; totalSold: number; name: string }[];
+    total: number;
+  }> {
+    const page = parseInt(pageQuery, 10) || 1;
+    const limit = parseInt(limitQuery, 10) || 15;
+    return this.saleService.findSalesOfMonth(page, limit);
+  }
+
+  @Get('all/year')
+  @ApiOperation({ summary: 'Get sales of the year (paginated)' })
+  async getSalesOfYear(
+    @Query('page') pageQuery: string = '1',
+    @Query('limit') limitQuery: string = '15',
+  ): Promise<{
+    data: { productId: string; totalSold: number; name: string }[];
+    total: number;
+  }> {
+    const page = parseInt(pageQuery, 10) || 1;
+    const limit = parseInt(limitQuery, 10) || 15;
+    return this.saleService.findSalesOfYear(page, limit);
+  }
   @Get('all-credit')
   @ApiOperation({ summary: 'Get all sales credits with optional pagination' })
   async findAllCredit(

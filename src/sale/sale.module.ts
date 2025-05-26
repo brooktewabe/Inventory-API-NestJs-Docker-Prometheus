@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Sale } from 'src/sale/entities/sale.entity';
 import { PaginationModule } from 'src/common/pagination.module';
 import { FileService } from '../common/file.service';
+import { Stock } from 'src/stock/entities/stock.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Sale]),
+  imports: [TypeOrmModule.forFeature([Sale, Stock]),
   PaginationModule
 ],
   controllers: [SaleController],

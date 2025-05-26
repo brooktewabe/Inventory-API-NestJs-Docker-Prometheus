@@ -8,12 +8,15 @@ import { Repository } from 'typeorm';
 import { Sale } from './entities/sale.entity';
 import { PaginationService } from 'src/common/pagination.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
+import { Stock } from 'src/stock/entities/stock.entity';
 
 @Injectable()
 export class SaleService {
   constructor(
     @InjectRepository(Sale)
     private readonly saleRepository: Repository<Sale>,
+      @InjectRepository(Stock)
+    private readonly stockRepository: Repository<Stock>,
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -29,7 +32,7 @@ export class SaleService {
   async calculateTotalSum(): Promise<number> {
     const result = await this.saleRepository
       .createQueryBuilder('sale')
-      .where('sale.Sale_type != :type', { type: 'Batch Sale' })
+      .where('sale.Sale_type != :type', { type: 'Batch Sale'  })
       .select('SUM(sale.Total_amount)', 'total')
       .getRawOne();
 
@@ -99,6 +102,120 @@ export class SaleService {
   
     return { data, total };
   }
+
+async findSalesOfDay(
+  page: number = 1,
+  limit: number = 15,
+): Promise<{ data: { productId: string; totalSold: number; name: string }[]; total: number }> {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const currentDay = now.getDate();
+
+  const allResults = await this.saleRepository
+    .createQueryBuilder('sale')
+    .select('sale.Product_id', 'productId')
+    .addSelect('SUM(sale.Quantity)', 'totalSold')
+    .groupBy('sale.Product_id')
+    .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+    .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', { month: currentMonth })
+    .andWhere('EXTRACT(DAY FROM sale.Date) = :day', { day: currentDay })
+    .andWhere('sale.Sale_type NOT IN (:...excludedTypes)', {
+      excludedTypes: ['Batch Sale', 'Batch part','Batch Usage', 'Single Usage'],
+    })
+    .orderBy('totalSold', 'DESC')
+    .getRawMany();
+
+  const total = allResults.length;
+
+  const paginatedResults = allResults.slice((page - 1) * limit, page * limit);
+  const productIds = paginatedResults.map((r) => r.productId);
+
+  const stocks = await this.stockRepository.findByIds(productIds);
+  const stockMap = new Map(stocks.map((s) => [s.id, s.Name]));
+
+  const data = paginatedResults.map((res) => ({
+    productId: res.productId,
+    totalSold: parseInt(res.totalSold, 10),
+    name: stockMap.get(res.productId) || 'Deleted Product',
+  }));
+
+  return { data, total };
+}
+
+async findSalesOfMonth(
+  page: number = 1,
+  limit: number = 15,
+): Promise<{ data: { productId: string; totalSold: number; name: string }[]; total: number }> {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const allResults = await this.saleRepository
+    .createQueryBuilder('sale')
+    .select('sale.Product_id', 'productId')
+    .addSelect('SUM(sale.Quantity)', 'totalSold')
+    .groupBy('sale.Product_id')
+    .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+    .andWhere('EXTRACT(MONTH FROM sale.Date) = :month', { month: currentMonth })
+    .andWhere('sale.Sale_type NOT IN (:...excludedTypes)', {
+      excludedTypes: ['Batch Sale', 'Batch part','Batch Usage', 'Single Usage'],
+    })
+    .orderBy('totalSold', 'DESC')
+    .getRawMany();
+
+  const total = allResults.length;
+
+  const paginatedResults = allResults.slice((page - 1) * limit, page * limit);
+  const productIds = paginatedResults.map((r) => r.productId);
+
+  const stocks = await this.stockRepository.findByIds(productIds);
+  const stockMap = new Map(stocks.map((s) => [s.id, s.Name]));
+
+  const data = paginatedResults.map((res) => ({
+    productId: res.productId,
+    totalSold: parseInt(res.totalSold, 10),
+    name: stockMap.get(res.productId) || 'Deleted Product',
+  }));
+
+  return { data, total };
+}
+
+async findSalesOfYear(
+  page: number = 1,
+  limit: number = 15,
+): Promise<{ data: { productId: string; totalSold: number; name: string }[]; total: number }> {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+
+  const allResults = await this.saleRepository
+    .createQueryBuilder('sale')
+    .select('sale.Product_id', 'productId')
+    .addSelect('SUM(sale.Quantity)', 'totalSold')
+    .groupBy('sale.Product_id')
+    .where('EXTRACT(YEAR FROM sale.Date) = :year', { year: currentYear })
+    .andWhere('sale.Sale_type NOT IN (:...excludedTypes)', {
+      excludedTypes: ['Batch Sale', 'Batch part','Batch Usage', 'Single Usage'],
+    })
+    .orderBy('totalSold', 'DESC')
+    .getRawMany();
+
+  const total = allResults.length;
+
+  const paginatedResults = allResults.slice((page - 1) * limit, page * limit);
+  const productIds = paginatedResults.map((r) => r.productId);
+
+  const stocks = await this.stockRepository.findByIds(productIds);
+  const stockMap = new Map(stocks.map((s) => [s.id, s.Name]));
+
+  const data = paginatedResults.map((res) => ({
+    productId: res.productId,
+    totalSold: parseInt(res.totalSold, 10),
+    name: stockMap.get(res.productId) || 'Deleted Product',
+  }));
+
+  return { data, total };
+}
   async findAllCredit(
   ): Promise<{ data: Sale[]; total: number }> {
     const [data, total] = await this.saleRepository
