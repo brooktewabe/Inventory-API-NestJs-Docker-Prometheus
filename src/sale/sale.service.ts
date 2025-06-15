@@ -102,6 +102,20 @@ export class SaleService {
   
     return { data, total };
   }
+  async findAllUsage(
+    page: number,
+    limit: number = 25,
+  ): Promise<{ data: Sale[]; total: number }> {
+    const [data, total] = await this.saleRepository
+      .createQueryBuilder('sale')
+      .where('sale.Sale_type IN (:...types)', { types: ['Single Usage', 'Batch Usage'] })
+      .orderBy('sale.Date', 'DESC') // Adjust to 'ASC' for ascending order if needed
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getManyAndCount();
+  
+    return { data, total };
+  }
 
 async findSalesOfDay(
   page: number = 1,

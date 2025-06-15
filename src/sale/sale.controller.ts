@@ -80,6 +80,23 @@ export class SaleController {
 
     return result;
   }
+  @Get('all-usage')
+  @ApiOperation({ summary: 'Get all sales with optional pagination' })
+  async findAllUsage(
+    @Query('page') pageQuery: string = '1',
+    @Query('limit') limitQuery: string = '10',
+  ): Promise<{ data: Sale[]; total: number }> {
+    const page = parseInt(pageQuery, 10);
+    const limit = parseInt(limitQuery, 10);
+
+    const result = await this.saleService.findAllUsage(page, limit);
+
+    if (!result.data.length) {
+      throw new NotFoundException('No sales found');
+    }
+
+    return result;
+  }
     @Get('all/day')
   @ApiOperation({ summary: 'Get sales of the day (paginated)' })
   async getSalesOfDay(
